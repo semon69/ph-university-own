@@ -23,11 +23,21 @@ const getAllStudents = async () => {
 };
 
 const getSingleStudent = async (id: string) => {
-  const result = await Student.findOne({ id });
+  // const result = await Student.findOne({ id });
+  const result = await Student.aggregate([
+    { $match: { id: id } }
+  ])
   return result;
 };
+
+const deleteSingleStudent = async (id: string) => {
+  const result = await Student.updateOne({ id }, { isDeleted: true });
+  return result;
+};
+
 export const studentServices = {
   createStudentIntoDB,
   getAllStudents,
   getSingleStudent,
+  deleteSingleStudent,
 };
