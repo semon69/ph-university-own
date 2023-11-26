@@ -6,3 +6,8 @@ export type TUser = {
   status: 'in-progress' | 'blocked';
   isDeleted: boolean;
 };
+
+// export interface UserModel extends Model<TUser> {
+//   // eslint-disable-next-line no-unused-vars
+//   isUserExists(id: string): Promise<TUser | null>;
+// }
