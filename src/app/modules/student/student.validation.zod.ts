@@ -61,7 +61,6 @@ const localGuardianSchemaZod = z.object({
 
 const studentSchemaZod = z.object({
   id: z.string().min(1),
-  password: z.string(),
   name: userNameSchemaZod,
   gender: z
     .enum(['male', 'female', 'others'])

@@ -1,10 +1,14 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 // import { userValidationZod } from './user.validation.zod';
 import { userServices } from './user.service';
 
-const createStudent = async (req: Request, res: Response) => {
+const createStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const {password, student} = req.body;
+    const { password, student } = req.body;
 
     // Zod validation
     // const zodParseData = userValidationZod.userSchemaZod.parse(userData);
@@ -16,12 +20,8 @@ const createStudent = async (req: Request, res: Response) => {
       message: 'Student create successfully',
       data: result,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Something went wrong',
-      error: error,
-    });
+  } catch (error) {
+    next(error);
   }
 };
 
