@@ -2,6 +2,7 @@ import express, {Request, Response } from 'express';
 import cors from 'cors';
 import { globalErrorHandler } from './app/middleWares/globalErrorHandler';
 import router from './app/routes';
+import { notFound } from './app/middleWares/notFoundError';
 const app = express();
 
 // Parser
@@ -16,4 +17,6 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(globalErrorHandler)
+app.use(notFound)
+
 export default app;
