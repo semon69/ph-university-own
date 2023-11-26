@@ -6,10 +6,9 @@ import {
   TStudent,
   StudentModel,
   TUserName,
-} from './student/student.interface';
-import bcrypt from 'bcrypt'
-import config from '../config';
-
+} from './student.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -84,93 +83,115 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent, StudentModel>({
-  id: { type: String, required: true, unique: true },
-  password: { type: String, required: true, maxlength: [20, "Password can not be more than 20 characters"], minlength: [8, 'Password can not be less than 8 characters'] },
-  name: {
-    type: userNameSchema,
-    required: [true, "Student's Name is required"],
-  },
-  gender: {
-    type: String,
-    enum: {
-      values: ['male', 'female', 'others'],
-      message: 'Values must be male, female, or others',
+const studentSchema = new Schema<TStudent, StudentModel>(
+  {
+    id: { type: String, required: true, unique: true },
+    password: {
+      type: String,
+      required: true,
+      maxlength: [20, 'Password can not be more than 20 characters'],
+      minlength: [8, 'Password can not be less than 8 characters'],
     },
-    required: [
-      true,
-      'Gender is required and should be either male, female, or others',
-    ],
+    user:{
+      type: Schema.Types.ObjectId,
+      required: [true, 'User Id is required'],
+      unique: true,
+      ref: "User",
+    },
+    name: {
+      type: userNameSchema,
+      required: [true, "Student's Name is required"],
+    },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'others'],
+        message: 'Values must be male, female, or others',
+      },
+      required: [
+        true,
+        'Gender is required and should be either male, female, or others',
+      ],
+    },
+    dateOfBirth: { type: String },
+    email: { type: String, required: true, unique: true },
+    contactNo: { type: String, required: true },
+    emergencyContactNo: { type: String, required: true },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    },
+    presentAddress: { type: String, required: true },
+    permanentAddress: { type: String, required: true },
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian details are required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local Guardian details are required'],
+    },
+    profileImg: { type: String },
+    isDeleted: {
+      type: Boolean,
+    },
   },
-  dateOfBirth: { type: String },
-  email: { type: String, required: true, unique: true },
-  contactNo: { type: String, required: true },
-  emergencyContactNo: { type: String, required: true },
-  bloodGroup: {
-    type: String,
-    enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+  {
+    toJSON: {
+      virtuals: true,
+    },
   },
-  presentAddress: { type: String, required: true },
-  permanentAddress: { type: String, required: true },
-  guardian: {
-    type: guardianSchema,
-    required: [true, 'Guardian details are required'],
-  },
-  localGuardian: {
-    type: localGuardianSchema,
-    required: [true, 'Local Guardian details are required'],
-  },
-  profileImg: { type: String },
-  isActive: {
-    type: String,
-    enum: ['active', 'blocked'],
-    default: 'active',
-  },
-  isDeleted: {
-    type: Boolean
-  }
+);
+
+// virtuals property
+
+studentSchema.virtual('fullName').get(function () {
+  return (
+    this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
+  );
 });
 
 // pre save middleware / hooks
 studentSchema.pre('save', async function (next) {
   // console.log(this, "pre hook: we will save data");
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this
+  const user = this;
   // hashing password
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds));
-  next()
-})
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
 
 // post save middleware / hooks
 studentSchema.post('save', async function (doc, next) {
   // console.log(this, "post hook: we saved our data");
-  doc.password = ' '
-  next()
-
-})
+  doc.password = ' ';
+  next();
+});
 
 // query middleware
 studentSchema.pre('find', async function (next) {
-  this.find({ isDeleted: { $ne: true } })
-  next()
-})
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
 
 studentSchema.pre('findOne', async function (next) {
-  this.find({ isDeleted: { $ne: true } })
-  next()
-})
+  this.find({ isDeleted: { $ne: true } });
+  next();
+});
 
 studentSchema.pre('aggregate', async function (next) {
-  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } })
-  next()
-})
-
+  this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
+  next();
+});
 
 // for custom static method
 studentSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Student.findOne({ id })
-  return existingUser
-}
+  const existingUser = await Student.findOne({ id });
+  return existingUser;
+};
 
 // for custom instance method
 // studentSchema.methods.isUserExists = async function (id: string) {
