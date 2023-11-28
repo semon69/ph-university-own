@@ -123,7 +123,11 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: localGuardianSchema,
       required: [true, 'Local Guardian details are required'],
     },
-    profileImg: { type: String }
+    profileImg: { type: String },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicSemester'
+    }
   },
   {
     toJSON: {
