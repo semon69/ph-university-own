@@ -3,8 +3,8 @@ import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-const getStudents = catchAsync(async (req, res, next) => {
+
+const getStudents = catchAsync(async (req, res) => {
   const result = await studentServices.getAllStudents();
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -14,8 +14,7 @@ const getStudents = catchAsync(async (req, res, next) => {
   });
 });
 
-// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-const getSingleStudent = catchAsync(async (req, res, next) => {
+const getSingleStudent = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result = await studentServices.getSingleStudent(id);
   sendResponse(res, {
@@ -27,8 +26,7 @@ const getSingleStudent = catchAsync(async (req, res, next) => {
 });
 
 const deleteSingleStudent = catchAsync(
-  // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-unused-vars
-  async (req, res, next) => {
+  async (req, res) => {
     const { id } = req.params;
     const result = await studentServices.deleteSingleStudent(id);
     sendResponse(res, {
