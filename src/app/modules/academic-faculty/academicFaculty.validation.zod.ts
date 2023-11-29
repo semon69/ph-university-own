@@ -7,6 +7,7 @@ const createAcademicFacultyValidationZod = z.object({
         })
     })
 })
+
 const updateAcademicFacultyValidationZod = z.object({
     body: z.object({
         name: z.string({
@@ -14,6 +15,7 @@ const updateAcademicFacultyValidationZod = z.object({
         })
     })
 })
+
 export const academicFacultyValiationZod = {
     createAcademicFacultyValidationZod,
     updateAcademicFacultyValidationZod
