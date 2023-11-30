@@ -3,6 +3,7 @@ import { Student } from './student.model';
 import { User } from '../user/user.model';
 import { AppError } from '../../errors/appErrors';
 import httpStatus from 'http-status';
+import { TStudent } from './student.interface';
 
 const getAllStudents = async () => {
   const result = await Student.find()
@@ -16,8 +17,8 @@ const getAllStudents = async () => {
 };
 
 const getSingleStudent = async (id: string) => {
-  const isStudentExists = await Student.isUserExists(id);
 
+  const isStudentExists = await Student.isUserExists(id);
   if (!isStudentExists) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
@@ -33,6 +34,42 @@ const getSingleStudent = async (id: string) => {
       populate: 'academicFaculty',
     });
   // const result = await Student.aggregate([{ $match: { id: id } }]);
+  return result;
+};
+
+const updateSingleStudent = async (id: string, payload: Partial<TStudent>) => {
+
+  const {name, guardian ,localGuardian, ...remainingField} = payload
+
+  const updatedData: Record<string, unknown> = {...remainingField}
+
+  if(name && Object.keys(name).length){
+    for (const [key, value] of Object.entries(name)){
+      updatedData[`name.${key}`] = value
+    }
+  }
+
+  if(guardian && Object.keys(guardian).length){
+    for (const [key, value] of Object.entries(guardian)){
+      updatedData[`guardian.${key}`] = value
+    }
+  }
+
+  if(localGuardian && Object.keys(localGuardian).length){
+    for (const [key, value] of Object.entries(localGuardian)){
+      updatedData[`localGuardian.${key}`] = value
+    }
+  }
+
+  const isStudentExists = await Student.isUserExists(id);
+  if (!isStudentExists) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "This student doesn't exis. Try with valid Id",
+    );
+  }
+  
+  const result = await Student.findOneAndUpdate({ id }, updatedData, {new: true})
   return result;
 };
 
@@ -83,4 +120,5 @@ export const studentServices = {
   getAllStudents,
   getSingleStudent,
   deleteSingleStudent,
+  updateSingleStudent
 };
