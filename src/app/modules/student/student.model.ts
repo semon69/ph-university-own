@@ -152,7 +152,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 //   );
 // });
 
-studentSchema.pre('updateOne', async function (next) {
+studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
   const isStudentExists = await Student.findOne(query);
   if (!isStudentExists) {
