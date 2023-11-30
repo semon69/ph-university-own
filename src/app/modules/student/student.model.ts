@@ -84,11 +84,11 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 const studentSchema = new Schema<TStudent, StudentModel>(
   {
     id: { type: String, required: true, unique: true },
-    user:{
+    user: {
       type: Schema.Types.ObjectId,
       required: [true, 'User Id is required'],
       unique: true,
-      ref: "User",
+      ref: 'User',
     },
     name: {
       type: userNameSchema,
@@ -126,8 +126,12 @@ const studentSchema = new Schema<TStudent, StudentModel>(
     profileImg: { type: String },
     admissionSemester: {
       type: Schema.Types.ObjectId,
-      ref: 'AcademicSemester'
-    }
+      ref: 'AcademicSemester',
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     toJSON: {
@@ -143,6 +147,15 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 //     this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
 //   );
 // });
+
+studentSchema.pre('updateOne', async function (next) {
+  const query = this.getQuery();
+  const isStudentExists = await Student.findOne(query);
+  if (!isStudentExists) {
+    throw new Error('This student is not exists. Please update with valid _id');
+  }
+  next();
+});
 
 // query middleware
 studentSchema.pre('find', async function (next) {
