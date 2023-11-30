@@ -98,7 +98,8 @@ const createStudentSchemaZod = z.object({
       localGuardian: localGuardianSchemaZod,
       profileImg: z.string().optional(),
       admissionSemester: z.string(),
-      isDeleted: z.boolean()
+      isDeleted: z.boolean(),
+      academicDepartment: z.string()
     }),
   }),
 });
