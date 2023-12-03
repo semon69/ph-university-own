@@ -31,14 +31,14 @@ academicDepartmetnSchema.pre('save', async function (next) {
   next();
 });
 
-// academicDepartmetnSchema.pre('findOne', async function (next) {
-//   const query = this.getQuery();
-//   const isDepartmentExist = await AcademicDepartment.findOne(query);
-//   if (!isDepartmentExist) {
-//     throw new Error('This department is not exists. Please find with valid _id');
-//   }
-//   next();
-// });
+academicDepartmetnSchema.pre('findOne', async function (next) {
+  const query = this.getQuery();
+  const isDepartmentExist = await AcademicDepartment.findOne(query);
+  if (!isDepartmentExist) {
+    throw new Error('This department is not exists. Please find with valid _id');
+  }
+  next();
+});
 
 
 

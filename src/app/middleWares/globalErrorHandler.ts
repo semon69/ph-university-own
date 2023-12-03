@@ -7,6 +7,8 @@ import { TErrorSource } from '../globalInterface/globalInterface';
 import config from '../config';
 import handleZodError from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
+import handleCastError from '../errors/handleCastError';
+import handleDuplicateKeyError from '../errors/handleDuplicateError';
 
 export const globalErrorHandler: ErrorRequestHandler = (
   error,
@@ -34,12 +36,23 @@ export const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplefiedError?.statusCode;
     message = simplefiedError?.message;
     errorSource = simplefiedError?.errorSource
-  }
+  } else if(error?.name === 'CastError'){
+    const simplefiedError = handleCastError(error);
+    statusCode = simplefiedError?.statusCode;
+    message = simplefiedError?.message;
+    errorSource = simplefiedError?.errorSource
+  } else if(error?.code === 11000){
+    const simplefiedError = handleDuplicateKeyError(error);
+    statusCode = simplefiedError?.statusCode;
+    message = simplefiedError?.message;
+    errorSource = simplefiedError?.errorSource
+  } 
 
   return res.status(statusCode).json({
     success: false,
     message: message,
     errorSource,
+    // error,
     stack: config?.NODE_ENV === 'development' ? error?.stack : null,
   });
 };
