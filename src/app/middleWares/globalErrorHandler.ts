@@ -9,6 +9,7 @@ import handleZodError from '../errors/handleZodError';
 import handleValidationError from '../errors/handleValidationError';
 import handleCastError from '../errors/handleCastError';
 import handleDuplicateKeyError from '../errors/handleDuplicateError';
+import { AppError } from '../errors/appErrors';
 
 export const globalErrorHandler: ErrorRequestHandler = (
   error,
@@ -31,22 +32,39 @@ export const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplefiedError.statusCode;
     message = simplefiedError.message;
     errorSource = simplefiedError.errorSource;
-  } else if(error?.name === 'ValidationError'){
+  } else if (error?.name === 'ValidationError') {
     const simplefiedError = handleValidationError(error);
     statusCode = simplefiedError?.statusCode;
     message = simplefiedError?.message;
-    errorSource = simplefiedError?.errorSource
-  } else if(error?.name === 'CastError'){
+    errorSource = simplefiedError?.errorSource;
+  } else if (error?.name === 'CastError') {
     const simplefiedError = handleCastError(error);
     statusCode = simplefiedError?.statusCode;
     message = simplefiedError?.message;
-    errorSource = simplefiedError?.errorSource
-  } else if(error?.code === 11000){
+    errorSource = simplefiedError?.errorSource;
+  } else if (error?.code === 11000) {
     const simplefiedError = handleDuplicateKeyError(error);
     statusCode = simplefiedError?.statusCode;
     message = simplefiedError?.message;
-    errorSource = simplefiedError?.errorSource
-  } 
+    errorSource = simplefiedError?.errorSource;
+  } else if (error instanceof Error) {
+    message = error?.message;
+    errorSource = [
+      {
+        path: ' Error occured',
+        message: error?.message,
+      },
+    ];
+  } else if (error instanceof AppError) {
+    statusCode = error?.statusCode;
+    message = error?.message;
+    errorSource = [
+      {
+        path: 'App Error occured',
+        message: error?.message,
+      },
+    ];
+  }
 
   return res.status(statusCode).json({
     success: false,
