@@ -6,6 +6,7 @@ import { ZodError } from 'zod';
 import { TErrorSource } from '../globalInterface/globalInterface';
 import config from '../config';
 import handleZodError from '../errors/handleZodError';
+import handleValidationError from '../errors/handleValidationError';
 
 export const globalErrorHandler: ErrorRequestHandler = (
   error,
@@ -28,6 +29,11 @@ export const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplefiedError.statusCode;
     message = simplefiedError.message;
     errorSource = simplefiedError.errorSource;
+  } else if(error?.name === 'ValidationError'){
+    const simplefiedError = handleValidationError(error);
+    statusCode = simplefiedError?.statusCode;
+    message = simplefiedError?.message;
+    errorSource = simplefiedError?.errorSource
   }
 
   return res.status(statusCode).json({
