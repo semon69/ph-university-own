@@ -1,9 +1,10 @@
 import { Schema, model } from 'mongoose';
-import { FacultyModel, TFaculty } from './faculty.interface';
 import { userNameSchema } from '../student/student.model';
+import { AdminModel, TAdmin } from './admin.interface';
+import config from '../../config';
+import bcrypt from 'bcrypt';
 
-
-const facultySchema = new Schema<TFaculty, FacultyModel>(
+const adminSchema = new Schema<TAdmin, AdminModel>(
   {
     id: { type: String, required: true, unique: true },
     user: {
@@ -12,13 +13,22 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
       unique: true,
       ref: 'User',
     },
+    password: {
+      type: String,
+      required: [true, 'Password is required'],
+    },
+    needsPasswordChange: {
+      type: Boolean,
+      required: [true, 'Needs change password is required'],
+      default: true,
+    },
     role: {
-        type: String,
-        required: [true, 'Role is required']
+      type: String,
+      required: [true, 'Role is required'],
     },
     designation: {
-        type: String,
-        required: [true, 'Designation is required']
+      type: String,
+      required: [true, 'Designation is required'],
     },
     name: {
       type: userNameSchema,
@@ -42,14 +52,9 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     presentAddress: { type: String, required: true },
     permanentAddress: { type: String, required: true },
     profileImg: { type: String },
-
-    academicDepartment: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicDepartment',
-    },
-    academicFaculty: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicFaculty',
+    managementDepartment: {
+      type: String,
+      required: [true, 'Management Department is required'],
     },
     isDeleted: {
       type: Boolean,
@@ -63,49 +68,67 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
   },
 );
 
+// pre save middleware / hooks to bcrypt password
+adminSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const admin = this;
+  // hashing password
+  admin.password = await bcrypt.hash(
+    admin.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
+
+// set empty password field
+adminSchema.post('save', async function (doc, next) {
+  doc.password = ' ';
+  next();
+});
+
 // virtuals property
 
-// facultySchema.virtual('fullName').get(function () {
+// adminSchema.virtual('fullName').get(function () {
 //   return (
 //     this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
 //   );
 // });
 
-facultySchema.pre('findOneAndUpdate', async function (next) {
+adminSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const isFacultyExists = await Faculty.findOne(query);
-  if (!isFacultyExists) {
+  const isAdminExists = await Admin.findOne(query);
+  if (!isAdminExists) {
     throw new Error('This student is not exists. Please update with valid _id');
   }
   next();
 });
 
 // query middleware
-facultySchema.pre('find', async function (next) {
+adminSchema.pre('find', async function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-facultySchema.pre('findOne', async function (next) {
+adminSchema.pre('findOne', async function (next) {
   this.find({ isDeleted: { $ne: true } });
   next();
 });
 
-facultySchema.pre('aggregate', async function (next) {
+adminSchema.pre('aggregate', async function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
 
 // for custom static method
-facultySchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Faculty.findOne({ id });
+adminSchema.statics.isUserExists = async function (id: string) {
+  const existingUser = await Admin.findOne({ id });
   return existingUser;
 };
 
 // for custom instance method
-// facultySchema.methods.isUserExists = async function (id: string) {
+// adminSchema.methods.isUserExists = async function (id: string) {
 //   const existingUser = await Student.findOne({ id })
 //   return existingUser
 // }
 
-export const Faculty = model<TFaculty, FacultyModel>('Faculty', facultySchema);
+export const Admin = model<TAdmin, AdminModel>('Admin', adminSchema);
