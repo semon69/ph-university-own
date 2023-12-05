@@ -1,4 +1,5 @@
 import { TAcademicSemester } from '../academic-semester/academicSemester.interface';
+import { Faculty } from '../faculty/faculty.model';
 import { User } from './user.model';
 
 const findLastStudentId = async () => {
@@ -16,6 +17,23 @@ const findLastStudentId = async () => {
     })
     .lean();
   return lastStudent?.id ? lastStudent?.id : undefined;
+};
+
+const findLastFacultyId = async () => {
+  const lastFaculty = await Faculty.findOne(
+    {
+      role: 'faculty',
+    },
+    {
+      id: 1,
+      _id: 0,
+    },
+  )
+    .sort({
+      createdAt: -1,
+    })
+    .lean();
+  return lastFaculty?.id ? lastFaculty?.id : undefined;
 };
 
 export const generateStudentId = async (payload: TAcademicSemester) => {
@@ -37,5 +55,16 @@ export const generateStudentId = async (payload: TAcademicSemester) => {
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
 
   incrementId = `${payload.year}${payload.code}${incrementId}`;
+  return incrementId;
+};
+
+export const generateFacultyId = async () => {
+  let currentId = (0).toString();
+  const lastFaculty = await findLastFacultyId();
+  if (lastFaculty) {
+    currentId = lastFaculty;
+  }
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+  incrementId = `F-${incrementId}`;
   return incrementId;
 };

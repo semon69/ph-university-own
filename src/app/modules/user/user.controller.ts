@@ -16,6 +16,20 @@ const createStudent = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+const createFaculty = catchAsync(async (req, res) => {
+  const { password, faculty } = req.body;
+  // Zod validation
+  // const zodParseData = userValidationZod.userSchemaZod.parse(userData);
+  const result = await userServices.createFacultyIntoDB(password, faculty);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Student create successfully',
+    data: result,
+  });
+});
 export const userControllers = {
   createStudent,
+  createFaculty
 };

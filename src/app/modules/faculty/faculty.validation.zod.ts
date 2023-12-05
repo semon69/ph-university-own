@@ -4,7 +4,7 @@ import { userNameSchemaZod } from '../student/student.validation.zod';
 const createFacultySchemaZod = z.object({
   body: z.object({
     password: z.string().max(20),
-    student: z.object({
+    faculty: z.object({
       designation: z.string().max(50),
       name: userNameSchemaZod,
       gender: z
