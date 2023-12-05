@@ -8,7 +8,7 @@ import {
   TUserName,
 } from './student.interface';
 
-const userNameSchema = new Schema<TUserName>({
+export const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],

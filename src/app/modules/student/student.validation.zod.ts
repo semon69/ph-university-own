@@ -2,7 +2,7 @@ import * as z from 'zod';
 
 // Define Zod schemas for validation based on the Mongoose schema
 
-const userNameSchemaZod = z.object({
+export const userNameSchemaZod = z.object({
   firstName: z
     .string()
     .max(20, {
