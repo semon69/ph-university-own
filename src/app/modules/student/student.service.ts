@@ -95,7 +95,7 @@ const getSingleStudent = async (id: string) => {
       "This student doesn't exis. Try with valid Id",
     );
   }
-  const result = await Student.findOne({ id })
+  const result = await Student.findById(id)
     .populate('user')
     .populate('admissionSemester')
     .populate({
@@ -137,8 +137,9 @@ const updateSingleStudent = async (id: string, payload: Partial<TStudent>) => {
     );
   }
 
-  const result = await Student.findOneAndUpdate({ id }, updatedData, {
+  const result = await Student.findByIdAndUpdate(id, updatedData, {
     new: true,
+    runValidators: true
   });
   return result;
 };
@@ -157,8 +158,8 @@ const deleteSingleStudent = async (id: string) => {
   try {
     session.startTransaction();
     // delete student (transaction 1)
-    const deleteStudent = await Student.findOneAndUpdate(
-      { id },
+    const deleteStudent = await Student.findByIdAndUpdate(
+    id,
       { isDeleted: true },
       { new: true, session },
     );
@@ -166,9 +167,12 @@ const deleteSingleStudent = async (id: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
     }
 
+      // get user _id from deletedAdmin
+      const userId = deleteStudent.user;
+
     // delete user (transaction 2)
-    const deleteUser = await User.updateOne(
-      { id },
+    const deleteUser = await User.findByIdAndUpdate(
+      { _id: userId },
       { isDeleted: true },
       { new: true, session },
     );

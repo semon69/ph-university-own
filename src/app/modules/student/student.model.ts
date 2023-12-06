@@ -154,7 +154,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const isStudentExists = await Student.findOne(query);
+  const isStudentExists = await Student.findById(query);
   if (!isStudentExists) {
     throw new Error('This student is not exists. Please update with valid _id');
   }
@@ -179,7 +179,7 @@ studentSchema.pre('aggregate', async function (next) {
 
 // for custom static method
 studentSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Student.findOne({ id });
+  const existingUser = await Student.findById(id);
   return existingUser;
 };
 
