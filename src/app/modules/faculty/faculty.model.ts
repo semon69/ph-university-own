@@ -12,10 +12,6 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
       unique: true,
       ref: 'User',
     },
-    role: {
-        type: String,
-        required: [true, 'Role is required']
-    },
     designation: {
         type: String,
         required: [true, 'Designation is required']
@@ -39,6 +35,10 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     email: { type: String, required: true, unique: true },
     contactNo: { type: String, required: true },
     emergencyContactNo: { type: String, required: true },
+    bloodGroup: {
+      type: String,
+      enum: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'],
+    },
     presentAddress: { type: String, required: true },
     permanentAddress: { type: String, required: true },
     profileImg: { type: String },
@@ -46,10 +46,6 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
     academicDepartment: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicDepartment',
-    },
-    academicFaculty: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicFaculty',
     },
     isDeleted: {
       type: Boolean,
@@ -63,13 +59,6 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
   },
 );
 
-// virtuals property
-
-// facultySchema.virtual('fullName').get(function () {
-//   return (
-//     this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
-//   );
-// });
 
 facultySchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
@@ -101,11 +90,5 @@ facultySchema.statics.isUserExists = async function (id: string) {
   const existingUser = await Faculty.findOne({ id });
   return existingUser;
 };
-
-// for custom instance method
-// facultySchema.methods.isUserExists = async function (id: string) {
-//   const existingUser = await Student.findOne({ id })
-//   return existingUser
-// }
 
 export const Faculty = model<TFaculty, FacultyModel>('Faculty', facultySchema);

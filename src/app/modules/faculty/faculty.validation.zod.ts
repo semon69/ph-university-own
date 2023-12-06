@@ -28,6 +28,9 @@ const createFacultySchemaZod = z.object({
       emergencyContactNo: z.string().min(1, {
         message: 'Emergency Contact Number is required',
       }),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+        .optional(),
       presentAddress: z.string().min(1, {
         message: 'Present Address is required',
       }),
@@ -36,7 +39,6 @@ const createFacultySchemaZod = z.object({
       }),
       profileImg: z.string().optional(),
       academicDepartment: z.string(),
-      academicFaculty: z.string(),
       isDeleted: z.boolean(),
     }),
   }),
