@@ -141,9 +141,6 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
 
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id; //reference
-    payload.role = newUser[0].role;
-    payload.password = newUser[0].password;
-    payload.needsPasswordChange = newUser[0].needsPasswordChange
 
     // create a student (transaction 2)
     const newAdmin = await Admin.create([payload], { session });

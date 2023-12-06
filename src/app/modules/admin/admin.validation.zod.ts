@@ -28,6 +28,9 @@ const createAdminSchemaZod = z.object({
       emergencyContactNo: z.string().min(1, {
         message: 'Emergency Contact Number is required',
       }),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'])
+        .optional(),
       presentAddress: z.string().min(1, {
         message: 'Present Address is required',
       }),
@@ -36,11 +39,10 @@ const createAdminSchemaZod = z.object({
       }),
       profileImg: z.string().optional(),
       isDeleted: z.boolean(),
-      managementDepartment: z.string()
     }),
   }),
 });
 
 export const adminValidationZod = {
-    createAdminSchemaZod,
+  createAdminSchemaZod,
 };
