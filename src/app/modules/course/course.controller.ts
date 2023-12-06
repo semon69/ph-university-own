@@ -56,7 +56,7 @@ const createCourse = catchAsync(async (req, res) => {
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
-      message: 'Update a Academic Faculty successfully',
+      message: 'Update a Course data successfully',
       data: result,
     });
   });
