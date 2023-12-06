@@ -9,8 +9,8 @@ import { TFaculty } from './faculty.interface';
 import { facultySearchAbleFields } from './faculty.constant';
 
 const getAllFaculties = async (query: Record<string, unknown>) => {
-  const studentQuery = new QueryBuilder(
-    Faculty.find().populate('user').populate('admissionSemester').populate({
+  const facultyQuery = new QueryBuilder(
+    Faculty.find().populate('user').populate({
       path: 'academicDepartment',
       populate: 'academicFaculty',
     }),
@@ -22,26 +22,24 @@ const getAllFaculties = async (query: Record<string, unknown>) => {
     .paginate()
     .fields();
 
-  const result = await studentQuery.modelQuery;
+  const result = await facultyQuery.modelQuery;
   return result;
 };
 
 const getSingleFaculty = async (id: string) => {
-  const isStudentExists = await Faculty.isUserExists(id);
-  if (!isStudentExists) {
+  const isFacultyExists = await Faculty.isUserExists(id);
+  if (!isFacultyExists) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "This student doesn't exis. Try with valid Id",
+      "This faculty doesn't exis. Try with valid Id",
     );
   }
-  const result = await Faculty.findOne({ id })
+  const result = await Faculty.findById(id)
     .populate('user')
-    .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
       populate: 'academicFaculty',
     });
-  // const result = await Student.aggregate([{ $match: { id: id } }]);
   return result;
 };
 
@@ -55,15 +53,15 @@ const updateSingleFaculty = async (id: string, payload: Partial<TFaculty>) => {
       updatedData[`name.${key}`] = value;
     }
   }
-  const isStudentExists = await Faculty.isUserExists(id);
-  if (!isStudentExists) {
+  const isFacultyExists = await Faculty.isUserExists(id);
+  if (!isFacultyExists) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "This student doesn't exis. Try with valid Id",
+      "This faculty doesn't exis. Try with valid Id",
     );
   }
 
-  const result = await Faculty.findOneAndUpdate({ id }, updatedData, {
+  const result = await Faculty.findByIdAndUpdate(id, updatedData, {
     new: true,
   });
   return result;

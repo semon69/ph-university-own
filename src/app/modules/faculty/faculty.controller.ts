@@ -27,8 +27,8 @@ const getSingleFaculty = catchAsync(async (req, res) => {
 
 const updateSingleFaculty = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const {student} = req.body
-  const result = await facultyServices.updateSingleFaculty(id, student);
+  const {faculty} = req.body
+  const result = await facultyServices.updateSingleFaculty(id, faculty);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

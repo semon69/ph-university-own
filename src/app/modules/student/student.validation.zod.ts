@@ -104,7 +104,7 @@ const createStudentSchemaZod = z.object({
   }),
 });
 
-const updateUserNameSchemaZod = z.object({
+export const updateUserNameSchemaZod = z.object({
   firstName: z
     .string()
     .max(20, {

@@ -10,4 +10,4 @@ router.patch(
 );
 router.delete('/:id', facultyController.deleteSingleFaculty);
 
-export const StudentRoutes = router;
+export const FacultyRoutes = router;
