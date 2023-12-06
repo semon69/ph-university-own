@@ -55,9 +55,9 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
 
 adminSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
-  const isAdminExists = await Admin.findOne(query);
+  const isAdminExists = await Admin.findById(query);
   if (!isAdminExists) {
-    throw new Error('This student is not exists. Please update with valid _id');
+    throw new Error('This admin is not exists. Please update with valid _id');
   }
   next();
 });
@@ -80,7 +80,7 @@ adminSchema.pre('aggregate', async function (next) {
 
 // for custom static method
 adminSchema.statics.isUserExists = async function (id: string) {
-  const existingUser = await Admin.findOne({ id });
+  const existingUser = await Admin.findById(id);
   return existingUser;
 };
 

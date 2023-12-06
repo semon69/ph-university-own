@@ -65,7 +65,7 @@ const updateFacultySchemaZod = z.object({
         }).optional(),
       contactNo: z.string().min(1, {
         message: 'Contact Number is required',
-      }),
+      }).optional(),
       emergencyContactNo: z.string().min(1, {
         message: 'Emergency Contact Number is required',
       }).optional(),
