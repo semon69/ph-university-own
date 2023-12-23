@@ -70,7 +70,7 @@ export const globalErrorHandler: ErrorRequestHandler = (
     success: false,
     message: message,
     errorSource,
-    // error,
+    error,
     stack: config?.NODE_ENV === 'development' ? error?.stack : null,
   });
 };

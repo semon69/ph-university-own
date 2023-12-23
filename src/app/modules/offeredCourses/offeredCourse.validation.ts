@@ -22,20 +22,40 @@ const createOfferedCourseValidationSchema = z.object({
       section: z.number(),
       maxCapacity: z.number(),
       days: z.array(z.enum([...Days] as [string, ...string[]])),
-      startTime: timeStringSchema, // HH: MM   00-23: 00-59
+      startTime: timeStringSchema,
       endTime: timeStringSchema,
     })
+    .refine(
+      (body) => {
+        const start = new Date(`1970-01-01T${body.startTime}:00`);
+        const end = new Date(`1970-01-01T${body.endTime}:00`);
+        return end > start;
+      },
+      {
+        message: 'Start time cannot be greater than end time',
+      },
+    ),
 });
 
 const updateOfferedCourseValidationSchema = z.object({
   body: z
     .object({
       faculty: z.string(),
-      maxCapacity: z.number(),
+      maxCapacity: z.number().optional(),
       days: z.array(z.enum([...Days] as [string, ...string[]])),
       startTime: timeStringSchema, // HH: MM   00-23: 00-59
       endTime: timeStringSchema,
     })
+    .refine(
+      (body) => {
+        const start = new Date(`1970-01-01T${body.startTime}:00`);
+        const end = new Date(`1970-01-01T${body.endTime}:00`);
+        return end > start;
+      },
+      {
+        message: 'Start time cannot be greater than end time',
+      },
+    ),
 });
 
 export const OfferedCourseValidations = {
