@@ -30,6 +30,18 @@ const createSemesterRegistrationIntoDB = async (
       'This Academic Semester is already registered',
     );
   }
+
+  // Check, if there is any UPCOMING or ONGOING semester
+  const isThereAnyUpcomingOrOngoingSemester =
+    await SemesterRegistration.findOne({
+      $or: [{ status: 'ONGOING' }, { status: 'UPCOMING' }],
+    });
+  if (isThereAnyUpcomingOrOngoingSemester) {
+    throw new AppError(
+      httpStatus.CONFLICT,
+      `There is already ${isThereAnyUpcomingOrOngoingSemester.status} Semester. You can't create new semester`,
+    );
+  }
   const result = await SemesterRegistration.create(payload);
   return result;
 };
@@ -50,13 +62,34 @@ const getAllSemesterRegistrationFromDB = async (
 };
 
 const getSingleSemesterRegistrationFromDB = async (id: string) => {
-  const result =  await SemesterRegistration.findById(id)
-  return result
+  const result = await SemesterRegistration.findById(id);
+  return result;
 };
 
 const updateSemesterRegistrationIntoDB = async (
+  id: string,
   payload: Partial<TSemesterRegistration>,
-) => {};
+) => {
+
+  // check, is semester registration exists
+  const isSemesterRegistrationExists =
+    await SemesterRegistration.findById(id);
+  if (!isSemesterRegistrationExists) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'This Registered Semester is not exists in database',
+    );
+  }
+
+  // check, if the semester is already ended
+  const currentSemesterStatus = isSemesterRegistrationExists?.status
+  if (currentSemesterStatus === 'ENDED') {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `There Semester is ENDED. You can't update this Semester`,
+    );
+  }
+};
 
 export const semesterRegistrationServices = {
   createSemesterRegistrationIntoDB,
