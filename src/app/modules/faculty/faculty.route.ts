@@ -3,9 +3,10 @@ import { facultyController } from './faculty.controller';
 import validateRequest from '../../middleWares/validateRequest';
 import { facultyValidationZod } from './faculty.validation.zod';
 import auth from '../../middleWares/auth';
+import { USER_ROLE } from '../user/user.constant';
 const router = express.Router();
 
-router.get('/',auth(), facultyController.getFaculties);
+router.get('/',auth(USER_ROLE.admin, USER_ROLE.faculty), facultyController.getFaculties);
 router.get('/:id', facultyController.getSingleFaculty);
 router.patch(
   '/:id',
