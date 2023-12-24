@@ -6,7 +6,7 @@ import { AcademicSemester } from '../academic-semester/academicSemester.model';
 // import { TAcademicSemester } from '../academic-semester/academicSemester.interface';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
-import { generateAdminId, generateFacultyId, generateStudentId } from './user.constant';
+import { generateAdminId, generateFacultyId, generateStudentId } from './user.utils';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import { AppError } from '../../errors/appErrors';

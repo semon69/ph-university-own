@@ -4,8 +4,9 @@ import { AppError } from '../errors/appErrors';
 import httpStatus from 'http-status';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import config from '../config';
+import { TUserRole } from '../modules/user/user.interface';
 
-const auth = () => {
+const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
     // check, is token sent by user
@@ -28,8 +29,17 @@ const auth = () => {
             'You are not authorized person',
           );
         }
+
+        const role = (decoded as JwtPayload)?.role;
+        if (requiredRoles && !requiredRoles.includes(role)) {
+          throw new AppError(
+            httpStatus.UNAUTHORIZED,
+            'You are not authorized person',
+          );
+        }
+
         // decoded undefined
-        req.user = decoded as JwtPayload
+        req.user = decoded as JwtPayload;
       },
     );
     next();
