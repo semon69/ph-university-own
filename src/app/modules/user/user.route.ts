@@ -28,4 +28,11 @@ router.post(
   validateRequest(adminValidationZod.createAdminSchemaZod),
   userControllers.createAdmin,
 );
+
+router.get(
+  '/me',
+  auth("admin", 'student', 'faculty'),
+  userControllers.getMe,
+);
+
 export const UserRoutes = router;
