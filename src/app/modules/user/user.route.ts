@@ -6,6 +6,7 @@ import { facultyValidationZod } from '../faculty/faculty.validation.zod';
 import { adminValidationZod } from '../admin/admin.validation.zod';
 import auth from '../../middleWares/auth';
 import { USER_ROLE } from './user.constant';
+import { userValidationZod } from './user.validation.zod';
 const router = express.Router();
 
 router.post(
@@ -33,6 +34,13 @@ router.get(
   '/me',
   auth("admin", 'student', 'faculty'),
   userControllers.getMe,
+);
+
+router.post(
+  '/change-status/:id',
+  auth("admin",),
+  validateRequest(userValidationZod.changeStatusSchema),
+  userControllers.changeStatus,
 );
 
 export const UserRoutes = router;

@@ -19,8 +19,6 @@ import { Faculty } from '../faculty/faculty.model';
 import { TFaculty } from '../faculty/faculty.interface';
 import { TAdmin } from '../admin/admin.interface';
 import { Admin } from '../admin/admin.model';
-import { verifyToken } from '../Auth/auth.utils';
-import { JwtPayload } from 'jsonwebtoken';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create user
@@ -173,29 +171,36 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
   }
 };
 
-const getMe = async (token: string) => {
-  if (!token) {
-    throw new AppError(httpStatus.NOT_FOUND, 'Token is not found');
-  }
+const getMe = async (userId: string, role: string) => {
+  // if (!token) {
+  //   throw new AppError(httpStatus.NOT_FOUND, 'Token is not found');
+  // }
 
-  const decoded = (await verifyToken(
-    token,
-    config.jwt_access_token as string,
-  )) as JwtPayload;
-  const { userId, role } = decoded;
+  // const decoded = (await verifyToken(
+  //   token,
+  //   config.jwt_access_token as string,
+  // )) as JwtPayload;
+  // const { userId, role } = decoded;
 
   let result = null;
   if (role == 'student') {
-    result = await Student.findOne({ id: userId });
+    result = await Student.findOne({ id: userId }).populate('user');
   }
   if (role == 'admin') {
-    result = await Admin.findOne({ id: userId });
+    result = await Admin.findOne({ id: userId }).populate('user');
   }
   if (role == 'faculty') {
-    result = await Faculty.findOne({ id: userId });
+    result = await Faculty.findOne({ id: userId }).populate('user');
   }
 
+  return result;
+};
 
+const changeStatus = async (id: string, payload: { status: string }) => {
+  const result = await User.findByIdAndUpdate(id, payload, {
+    new: true,
+  });
+  return result;
 };
 
 export const userServices = {
@@ -203,4 +208,5 @@ export const userServices = {
   createFacultyIntoDB,
   createAdminIntoDB,
   getMe,
+  changeStatus,
 };
