@@ -6,7 +6,11 @@ import { AcademicSemester } from '../academic-semester/academicSemester.model';
 // import { TAcademicSemester } from '../academic-semester/academicSemester.interface';
 import { TStudent } from '../student/student.interface';
 import { Student } from '../student/student.model';
-import { generateAdminId, generateFacultyId, generateStudentId } from './user.utils';
+import {
+  generateAdminId,
+  generateFacultyId,
+  generateStudentId,
+} from './user.utils';
 import { TUser } from './user.interface';
 import { User } from './user.model';
 import { AppError } from '../../errors/appErrors';
@@ -23,8 +27,11 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // If password is not given the use defalut password
   userData.password = password || (config.default_pass as string);
 
-  //   set student role
+  // set student role
   userData.role = 'student';
+  // set student email
+  userData.email = payload.email;
+
   const admissionSemester = await AcademicSemester.findById(
     payload.admissionSemester,
   );
@@ -77,6 +84,8 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
   //   set student role
   userData.role = 'faculty';
+  // set faculty email
+  userData.email = payload.email;
 
   // create session
   const session = await mongoose.startSession();
@@ -123,6 +132,8 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
 
   //   set student role
   userData.role = 'admin';
+  // set admin email
+  userData.email = payload.email;
 
   // create session
   const session = await mongoose.startSession();
@@ -153,7 +164,6 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
     await session.endSession();
 
     return newAdmin;
-
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
@@ -164,5 +174,5 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
 export const userServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
-  createAdminIntoDB
+  createAdminIntoDB,
 };
