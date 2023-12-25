@@ -6,9 +6,7 @@ import sendResponse from '../../utils/sendResponse';
 
 const createStudent = catchAsync(async (req, res) => {
   const { password, student } = req.body;
-  // Zod validation
-  // const zodParseData = userValidationZod.userSchemaZod.parse(userData);
-  const result = await userServices.createStudentIntoDB(password, student);
+  const result = await userServices.createStudentIntoDB(req.file, password, student);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -19,8 +17,6 @@ const createStudent = catchAsync(async (req, res) => {
 
 const createFaculty = catchAsync(async (req, res) => {
   const { password, faculty } = req.body;
-  // Zod validation
-  // const zodParseData = userValidationZod.userSchemaZod.parse(userData);
   const result = await userServices.createFacultyIntoDB(password, faculty);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -32,8 +28,6 @@ const createFaculty = catchAsync(async (req, res) => {
 
 const createAdmin = catchAsync(async (req, res) => {
   const { password, admin } = req.body;
-  // Zod validation
-  // const zodParseData = userValidationZod.userSchemaZod.parse(userData);
   const result = await userServices.createAdminIntoDB(password, admin);
   sendResponse(res, {
     statusCode: httpStatus.OK,

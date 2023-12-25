@@ -61,7 +61,7 @@ const localGuardianSchemaZod = z.object({
 
 const createStudentSchemaZod = z.object({
   body: z.object({
-    password: z.string().max(20),
+    password: z.string().max(20).optional(),
     student: z.object({
       name: userNameSchemaZod,
       gender: z
@@ -96,7 +96,7 @@ const createStudentSchemaZod = z.object({
       }),
       guardian: guardianSchemaZod,
       localGuardian: localGuardianSchemaZod,
-      profileImg: z.string().optional(),
+      // profileImg: z.string().optional(),
       admissionSemester: z.string(),
       isDeleted: z.boolean(),
       academicDepartment: z.string()
