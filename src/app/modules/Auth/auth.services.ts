@@ -205,18 +205,77 @@ const forgetPassword = async (userId: string) => {
     '10m',
   );
 
-  const resetLink = `http://localhost:3000/id=${user.id}&token=${resetToken}`
+  const resetLink = `http://localhost:3000/id=${user.id}&token=${resetToken}`;
 
-  sendEmail(user.email, resetLink)
+  sendEmail(user.email, resetLink);
 
   // return {
   //   accessToken,
   // };
 };
 
+const resetPassword = async (
+  payload: { id: string; newPassword: string },
+  token: string,
+) => {
+  const user = await User.isUserExists(payload?.id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'The user is not found');
+  }
+
+  // check, is users deleted or not
+  const isDeleted = user?.isDeleted;
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'The user is Deleted');
+  }
+
+  // check, is users blocked or not
+  const userStatus = user?.status;
+  if (userStatus === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'The user is blocked');
+  }
+
+  // check, is token is valid
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_token as string,
+  ) as JwtPayload;
+
+  if (decoded?.userId !== payload?.id) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      ' You are forbidden to access this',
+    );
+  }
+
+  // hashed password
+  const hashedNewPassword = await bcrypt.hash(
+    payload?.newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  await User.findOneAndUpdate(
+    {
+      id: decoded.userId,
+      role: decoded.role,
+    },
+    {
+      password: hashedNewPassword,
+      needsPasswordChange: false,
+      passwordChangeAt: new Date(),
+    },
+  );
+};
+
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
-  forgetPassword
+  forgetPassword,
+  resetPassword,
 };
+
+
+// 
+
