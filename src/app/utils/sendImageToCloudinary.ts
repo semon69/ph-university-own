@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { v2 as cloudinary } from 'cloudinary';
 import config from '../config';
 import multer from 'multer';
