@@ -1,11 +1,11 @@
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
-import { enrolledCourseServices } from './enrolledCourse.service';
+import { EnrolledCourseServices } from './enrolledCourse.service';
 
 const createEnrolledCourse = catchAsync(async (req, res) => {
   const userId = req.user.userId;
-  const result = await enrolledCourseServices.createEnrolledCourseIntoDB(
+  const result = await EnrolledCourseServices.createEnrolledCourseIntoDB(
     userId,
     req.body,
   );
@@ -20,7 +20,7 @@ const createEnrolledCourse = catchAsync(async (req, res) => {
 
 const updateEnrolledCourseMarks = catchAsync(async (req, res) => {
   const facultyId = req.user.userId;
-  const result = await enrolledCourseServices.updateEnrolledCourseMarksIntoDB(
+  const result = await EnrolledCourseServices.updateEnrolledCourseMarksIntoDB(
     facultyId,
     req.body,
   );
