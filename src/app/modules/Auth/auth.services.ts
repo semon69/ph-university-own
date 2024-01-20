@@ -128,7 +128,7 @@ const refreshToken = async (token: string) => {
   const { userId, iat } = decoded;
 
   // check, is users exists or not
-  const user = await User.isUserExists(userId);
+  const user = await User.findOne(userId);
 
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'The user is not found');
