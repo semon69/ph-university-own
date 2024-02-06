@@ -3,11 +3,12 @@ import validateRequest from '../../middleWares/validateRequest';
 import { academicDepartmentControllers } from './academicDepartment.controllers';
 import { academicDepartmentValiationZod } from './academicDepartment.validation.zod';
 import auth from '../../middleWares/auth';
+import { USER_ROLE } from '../user/user.constant';
 const router = Router();
 
 router.post(
   '/create-academic-department',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   validateRequest(
     academicDepartmentValiationZod.createAcademicDepartmentValidationZod,
   ),
@@ -16,19 +17,19 @@ router.post(
 
 router.get(
   '/',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   academicDepartmentControllers.getAllAcademicDepartments,
 );
 
 router.get(
   '/:departmentId',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   academicDepartmentControllers.getSingleAcademicDepartment,
 );
 
 router.patch(
   '/:departmentId',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   validateRequest(
     academicDepartmentValiationZod.updateAcademicDepartmentValidationZod,
   ),

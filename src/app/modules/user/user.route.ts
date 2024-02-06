@@ -12,11 +12,11 @@ const router = express.Router();
 
 router.post(
   '/create-student',
-  auth(USER_ROLE.admin),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   upload.single('file'),
   (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data)
-    next()
+    req.body = JSON.parse(req.body.data);
+    next();
   },
   validateRequest(studentValidationZod.createStudentSchemaZod),
   userControllers.createStudent,
@@ -24,27 +24,33 @@ router.post(
 
 router.post(
   '/create-faculty',
-  auth("admin"),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(facultyValidationZod.createFacultySchemaZod),
   userControllers.createFaculty,
 );
 
 router.post(
   '/create-admin',
-  auth("admin"),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = JSON.parse(req.body.data);
+    next();
+  },
   validateRequest(adminValidationZod.createAdminSchemaZod),
   userControllers.createAdmin,
 );
 
-router.get(
-  '/me',
-  auth("admin", 'student', 'faculty'),
-  userControllers.getMe,
-);
+router.get('/me', auth('admin', 'student', 'faculty'), userControllers.getMe);
 
 router.post(
   '/change-status/:id',
-  auth("admin",),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(userValidationZod.changeStatusSchema),
   userControllers.changeStatus,
 );

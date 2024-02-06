@@ -3,12 +3,13 @@ import { academicSemesterControllers } from './academicSemester.controller';
 import validateRequest from '../../middleWares/validateRequest';
 import { academicSemesterValidation } from './academicSemester.validation.zod';
 import auth from '../../middleWares/auth';
+import { USER_ROLE } from '../user/user.constant';
 
 const router = express.Router();
 
 router.post(
   '/create-academic-semester',
-  auth('admin'),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(
     academicSemesterValidation.createAcademicSemesterValidationZod,
   ),
@@ -17,19 +18,19 @@ router.post(
 
 router.get(
   '/',
-  auth('admin'),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   academicSemesterControllers.getAllAcademicSemester,
 );
 
 router.get(
   '/:semesterId',
-  auth('admin'),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   academicSemesterControllers.getSingleAcademicSemester,
 );
 
 router.patch(
   '/:semesterId',
-  auth('admin'),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(
     academicSemesterValidation.updateAcademicSemesterValidationZod,
   ),

@@ -123,7 +123,7 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: localGuardianSchema,
       required: [true, 'Local Guardian details are required'],
     },
-    profileImg: { type: String },
+    profileImg: { type: String, default: ' ' },
     admissionSemester: {
       type: Schema.Types.ObjectId,
       ref: 'AcademicSemester',
@@ -136,6 +136,10 @@ const studentSchema = new Schema<TStudent, StudentModel>(
       type: Schema.Types.ObjectId,
       ref: 'AcademicDepartment',
     },
+    academicFaculty: {
+      type: Schema.Types.ObjectId,
+      ref: 'AcademicFaculty',
+    },
   },
   {
     toJSON: {
@@ -144,13 +148,6 @@ const studentSchema = new Schema<TStudent, StudentModel>(
   },
 );
 
-// virtuals property
-
-// studentSchema.virtual('fullName').get(function () {
-//   return (
-//     this.name.firstName + ' ' + this.name.middleName + ' ' + this.name.lastName
-//   );
-// });
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();

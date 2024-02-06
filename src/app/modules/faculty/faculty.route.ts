@@ -8,23 +8,27 @@ const router = express.Router();
 
 router.get(
   '/',
-  auth(USER_ROLE.admin, USER_ROLE.faculty),
+  auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.superAdmin),
   facultyController.getFaculties,
 );
 
 router.get(
   '/:id',
-  auth('admin', 'faculty'),
+  auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.superAdmin),
   facultyController.getSingleFaculty,
 );
 
 router.patch(
   '/:id',
-  auth('admin'),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(facultyValidationZod.updateFacultySchemaZod),
   facultyController.updateSingleFaculty,
 );
 
-router.delete('/:id', auth('admin'), facultyController.deleteSingleFaculty);
+router.delete(
+  '/:id',
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  facultyController.deleteSingleFaculty,
+);
 
 export const FacultyRoutes = router;
