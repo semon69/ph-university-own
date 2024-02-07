@@ -18,13 +18,23 @@ router.post(
 
 router.get(
   '/',
-  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  auth(
+    USER_ROLE.admin,
+    USER_ROLE.superAdmin,
+    USER_ROLE.student,
+    USER_ROLE.faculty,
+  ),
   academicSemesterControllers.getAllAcademicSemester,
 );
 
 router.get(
   '/:semesterId',
-  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  auth(
+    USER_ROLE.admin,
+    USER_ROLE.superAdmin,
+    USER_ROLE.student,
+    USER_ROLE.faculty,
+  ),
   academicSemesterControllers.getSingleAcademicSemester,
 );
 

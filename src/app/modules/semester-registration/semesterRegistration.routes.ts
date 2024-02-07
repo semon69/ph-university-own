@@ -3,11 +3,12 @@ import validateRequest from '../../middleWares/validateRequest';
 import { semesterRegistrationControllers } from './semesterRegistration.controllers';
 import { semesterRegistrationValidation } from './semesterRegistration.validation';
 import auth from '../../middleWares/auth';
+import { USER_ROLE } from '../user/user.constant';
 const router = Router();
 
 router.post(
   '/create-semester-regestration',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   validateRequest(
     semesterRegistrationValidation.semesterRegistrationValidationZod,
   ),
@@ -16,19 +17,29 @@ router.post(
 
 router.get(
   '/',
-  auth('admin', 'faculty', 'student'),
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.admin,
+    USER_ROLE.faculty,
+    USER_ROLE.student,
+  ),
   semesterRegistrationControllers.getAllSemesterRegistration,
 );
 
 router.get(
   '/:id',
-  auth('admin', 'faculty', 'student'),
+  auth(
+    USER_ROLE.superAdmin,
+    USER_ROLE.admin,
+    USER_ROLE.faculty,
+    USER_ROLE.student,
+  ),
   semesterRegistrationControllers.getSingleSemesterRegistration,
 );
 
 router.patch(
   '/:id',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   validateRequest(
     semesterRegistrationValidation.updateSemesterRegistrationValidationZod,
   ),
@@ -37,7 +48,7 @@ router.patch(
 
 router.delete(
   '/:id',
-  auth('admin'),
+  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
   semesterRegistrationControllers.deleteSemesterRegistration,
 );
 

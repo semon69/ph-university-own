@@ -46,7 +46,16 @@ router.post(
   userControllers.createAdmin,
 );
 
-router.get('/me', auth('admin', 'student', 'faculty'), userControllers.getMe);
+router.get(
+  '/me',
+  auth(
+    USER_ROLE.admin,
+    USER_ROLE.superAdmin,
+    USER_ROLE.student,
+    USER_ROLE.faculty,
+  ),
+  userControllers.getMe,
+);
 
 router.post(
   '/change-status/:id',
