@@ -10,10 +10,7 @@ import { facultySearchAbleFields } from './faculty.constant';
 
 const getAllFaculties = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(
-    Faculty.find().populate('user').populate({
-      path: 'academicDepartment',
-      populate: 'academicFaculty',
-    }),
+    Faculty.find().populate('user').populate('academicDepartment academicFaculty'),
     query,
   )
     .search(facultySearchAbleFields)

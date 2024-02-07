@@ -24,6 +24,6 @@ academicFacultySchema.pre('findOneAndUpdate', async function (next) {
 });
 
 export const AcademicFaculty = model<TAcademicFaculty>(
-  'AcadmicFaculty',
+  'AcademicFaculty',
   academicFacultySchema,
 );

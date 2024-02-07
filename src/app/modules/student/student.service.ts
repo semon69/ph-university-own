@@ -71,10 +71,7 @@ const getAllStudents = async (query: Record<string, unknown>) => {
     Student.find()
     .populate('user')
     .populate('admissionSemester')
-    .populate({
-      path: 'academicDepartment',
-      populate: 'academicFaculty',
-    }),
+    .populate('academicDepartment academicFaculty'),
     query,
   )
     .search(studentSearchAbleFields)
