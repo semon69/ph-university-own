@@ -24,13 +24,15 @@ const getAllOfferedCourses = catchAsync(async (req: Request, res: Response) => {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Offered Courses data retrieved successfully !',
-    data: result,
+    meta: result.meta,
+    data: result.result,
   });
 });
 const getMyOfferedCourse = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.userId
+  const userId = req.user.userId;
   const result = await OfferedCourseServices.getMyOfferedCourseFromDB(
-    userId
+    userId,
+    req.query,
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,
