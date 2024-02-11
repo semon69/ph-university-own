@@ -53,6 +53,16 @@ const adminSchema = new Schema<TAdmin, AdminModel>(
   },
 );
 
+adminSchema.virtual('fullName').get(function () {
+  return (
+    this?.name?.firstName +
+    ' ' +
+    this?.name?.middleName +
+    ' ' +
+    this?.name?.lastName
+  );
+});
+
 adminSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
   const isAdminExists = await Admin.findById(query);

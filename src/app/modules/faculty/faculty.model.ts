@@ -62,6 +62,17 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
   },
 );
 
+facultySchema.virtual('fullName').get(function () {
+  return (
+    this?.name?.firstName +
+    ' ' +
+    this?.name?.middleName +
+    ' ' +
+    this?.name?.lastName
+  );
+});
+
+
 
 facultySchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
